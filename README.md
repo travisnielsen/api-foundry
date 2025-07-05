@@ -42,8 +42,19 @@ This repo includes a configuration for running and debugging the API. Simply sel
 
 ## Run the Application
 
-This demo API was written using [FastAPI](https://github.com/FastAPI/FastAPI). Use the following command to run it without the debugger:
+### Local
+
+Use the following command to run the API locally and without the debugger:
 
 ```bash
 fastapi dev src/main.py
+```
+
+### Docker
+
+Use the following commands to create a container image and run the API:
+
+```bash
+docker build -t api-foundry .
+docker run -p 8000:8000 --env-file .env api-foundry
 ```

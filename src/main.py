@@ -19,9 +19,7 @@ async def lifespan(app: FastAPI):
     # Startup
     mem = InMemoryCacheBackend()
     caches.set(CACHE_KEY, mem)
-    
     yield
-    
     # Shutdown
     await close_caches()
 
@@ -41,8 +39,7 @@ def mem_cache():
 
 
 @app.get("/")
-async def index(request: Request,
-                session_cache: InMemoryCacheBackend = Depends(mem_cache)):
+async def index(request: Request, session_cache: InMemoryCacheBackend = Depends(mem_cache)):
     # check cache for user
     user = await session_cache.get('user')
 
@@ -54,13 +51,10 @@ async def index(request: Request,
 
 
 @app.get('/login', response_class=HTMLResponse)
-async def login(
-    request: Request,
-    session_cache: InMemoryCacheBackend = Depends(mem_cache)
-):
+async def login(request: Request, session_cache: InMemoryCacheBackend = Depends(mem_cache)):
     # Technically we could use empty list [] as scopes to do just sign in,
     # here we choose to also collect end user consent upfront
-    flow = auth_utils.build_auth_code_flow(app, scopes = os.getenv("SCOPE").split(','))
+    flow = auth_utils.build_auth_code_flow(app, scopes = ["User.ReadBasic.All"])
     await session_cache.set('flow', flow, ttl=default_ttl)  # cache the flow for 10 hours or until app restarts
     cached_flow = await session_cache.get('flow')
 
@@ -71,10 +65,7 @@ async def login(
 
 
 @app.get('/auth')  # Its absolute URL must match your app's redirect_uri set in AAD
-async def authorized(
-    request: Request,
-    session_cache: InMemoryCacheBackend = Depends(mem_cache)
-):
+async def authorized(request: Request, session_cache: InMemoryCacheBackend = Depends(mem_cache)):
     try:
         cache = await auth_utils.load_cache(session_cache)  # pass our mem-cache as a session
         cached_flow = await session_cache.get('flow')
@@ -106,9 +97,7 @@ async def authorized(
 
 
 @app.get('/logout')
-def logout(
-    session_cache: InMemoryCacheBackend = Depends(mem_cache)
-):
+def logout(session_cache: InMemoryCacheBackend = Depends(mem_cache)):
     session_cache.flush()  # flush out the mem-cache
 
     # construct the url to hit MS & logout user then redirect back to index page
@@ -122,15 +111,9 @@ def logout(
 
 
 @app.get('/graphcall')
-async def graphcall(
-    request: Request,
-    session_cache: InMemoryCacheBackend = Depends(mem_cache)
-):
+async def graphcall(request: Request, session_cache: InMemoryCacheBackend = Depends(mem_cache)):
     # attempt to fetch the token from our mem-cache
-    token = await auth_utils.get_token_from_cache(session_cache, os.getenv("SCOPE").split(','))
-
-    # uncomment to print the full token info
-    # print(token)
+    token = await auth_utils.get_token_from_cache(session_cache, ["User.ReadBasic.All"])
 
     if not token:
         return RedirectResponse(app.url_path_for('login'))

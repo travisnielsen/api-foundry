@@ -22,9 +22,10 @@ async def save_cache(cache, session_cache):
 
 
 def build_msal_app(cache=None, authority=None):
+    
     return msal.ConfidentialClientApplication(
         os.getenv("CLIENT_ID"),
-        authority=authority or os.getenv("AUTHORITY"),
+        authority=os.getenv("AUTHORITY"),
         client_credential=os.getenv("CLIENT_SECRET"),
         token_cache=cache
     )
