@@ -1,1 +1,5 @@
+dotenv
 fastapi[standard]
+fastapi-cache
+fastapi-sessions
+msal
