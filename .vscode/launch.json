@@ -11,7 +11,7 @@
             ],
             "jinja": true,
             "cwd": "${workspaceFolder}/src",
-            "envFile": "${workspaceFolder}/src/.env",
+            "envFile": "${workspaceFolder}/.env",
         }
     ]
 }

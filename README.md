@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 ## App Configuration
 
-Create a `.env` file under the **src** directory and use the provided [env.example](/src/env.example) file to add the necessary environment variables. Be sure to update each value to match your environment.
+Create a `.env` file in the project root directory and use the provided [env.example](env.example) file to add the necessary environment variables. Be sure to update each value to match your environment.
 
 ## Run and Debug
 
